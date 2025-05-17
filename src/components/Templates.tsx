@@ -152,7 +152,26 @@ const BreathingPatternVisualizer = ({
 export const Templates = ({ onStartExercise }: TemplatesProps) => {
   return (
     <div className="templates-container">
-      <h1>Breathing Templates</h1>
+      <div className="templates-header">
+        <h1>Breathing Templates</h1>
+        <button className="add-template-button" title="Add custom template">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 5V19M5 12H19"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
       <div className="templates-grid">
         {exercises.map((exercise) => (
           <div key={exercise.id} className="template-card">
