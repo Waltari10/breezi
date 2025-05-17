@@ -7,6 +7,8 @@ const defaultPattern: BreathingPattern = {
   holdIn: 2,
   exhale: 6,
   holdOut: 2,
+  name: "Default Exercise",
+  duration: 0,
 };
 
 interface BreathProps {
@@ -19,12 +21,11 @@ export const Breath = ({
   onComplete,
 }: BreathProps) => {
   const [currentPattern] = useState<BreathingPattern>(pattern);
-  const [exerciseName] = useState<string>("Default Exercise");
 
   return (
     <div className="breath-container">
       <div className="breath-header">
-        <h1>{exerciseName}</h1>
+        <h1>{currentPattern.name}</h1>
         <div className="pattern-info">
           <div className="pattern-detail">
             <span className="label">Inhale:</span>

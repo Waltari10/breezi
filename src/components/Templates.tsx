@@ -18,6 +18,8 @@ const exercises: Exercise[] = [
       holdIn: 4,
       exhale: 4,
       holdOut: 4,
+      name: "Box Breath",
+      duration: 0,
     },
   },
   {
@@ -27,6 +29,8 @@ const exercises: Exercise[] = [
     pattern: {
       inhale: 6,
       exhale: 6,
+      name: "HRV Breath",
+      duration: 0,
     },
   },
   {
@@ -38,6 +42,8 @@ const exercises: Exercise[] = [
       holdIn: 2,
       exhale: 6,
       holdOut: 2,
+      name: "Test Exercise",
+      duration: 0,
     },
   },
 ];

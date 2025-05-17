@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ExerciseHistory } from "../utils/history";
-import { getHistory, clearHistory, getStreakInfo } from "../utils/history";
+import { getHistory, getStreakInfo } from "../utils/history";
 import "./History.css";
 
 const StreakDisplay = () => {
@@ -65,15 +65,6 @@ export const History = () => {
     return parts.join(", ");
   };
 
-  const handleClearHistory = () => {
-    if (
-      window.confirm("Are you sure you want to clear your exercise history?")
-    ) {
-      clearHistory();
-      setHistory([]);
-    }
-  };
-
   if (history.length === 0) {
     return (
       <div className="history-container">
@@ -91,12 +82,7 @@ export const History = () => {
     <div className="history-container">
       <div className="history-header">
         <h1>Exercise History</h1>
-        <div className="header-actions">
-          <StreakDisplay />
-          <button className="clear-button" onClick={handleClearHistory}>
-            Clear History
-          </button>
-        </div>
+        <StreakDisplay />
       </div>
       <div className="history-list">
         {history.map((entry) => (

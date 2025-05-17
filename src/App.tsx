@@ -31,7 +31,7 @@ function App() {
   };
 
   const handleStartExercise = (pattern: BreathingPattern, name: string) => {
-    setSelectedPattern(pattern);
+    setSelectedPattern({ ...pattern, name });
     setCurrentExercise({ name, startTime: Date.now() });
     navigate("/breath");
   };
@@ -42,8 +42,8 @@ function App() {
         (Date.now() - currentExercise.startTime) / 1000
       );
       addToHistory({
-        name: currentExercise.name,
-        pattern: selectedPattern,
+        name: selectedPattern.name,
+        pattern: { ...selectedPattern, duration },
         duration,
       });
       setCurrentExercise(null);

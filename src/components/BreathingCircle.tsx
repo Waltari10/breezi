@@ -8,6 +8,8 @@ export type BreathingPattern = {
   holdIn?: number;
   exhale: number;
   holdOut?: number;
+  name: string;
+  duration: number; // in seconds
 };
 
 const defaultPattern: BreathingPattern = {
@@ -15,6 +17,8 @@ const defaultPattern: BreathingPattern = {
   holdIn: 2,
   exhale: 6,
   holdOut: 2,
+  name: "Default Exercise",
+  duration: 0,
 };
 
 interface BreathingCircleProps {
