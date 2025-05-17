@@ -185,12 +185,20 @@ export const Templates = ({ onStartExercise }: TemplatesProps) => {
       </div>
       <div className="templates-grid">
         {exercises.map((exercise) => (
-          <div key={exercise.id} className="template-card">
+          <div
+            key={exercise.id}
+            className="template-card"
+            onClick={() => onStartExercise(exercise.pattern, exercise.name)}
+            style={{ cursor: "pointer" }}
+          >
             <div className="template-header">
               <h2>{exercise.name}</h2>
               <button
                 className="delete-template-button"
-                onClick={() => handleDeleteTemplate(exercise.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteTemplate(exercise.id);
+                }}
                 title="Delete template"
               >
                 <svg
@@ -214,7 +222,10 @@ export const Templates = ({ onStartExercise }: TemplatesProps) => {
             <BreathingPatternVisualizer pattern={exercise.pattern} />
             <button
               className="start-button"
-              onClick={() => onStartExercise(exercise.pattern, exercise.name)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onStartExercise(exercise.pattern, exercise.name);
+              }}
             >
               Start Exercise
             </button>
