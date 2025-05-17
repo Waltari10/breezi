@@ -28,10 +28,12 @@ export const Breath = ({
   const [currentPattern] = useState<BreathingPattern>(pattern);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
   const chimeAudioRef = useRef<HTMLAudioElement | null>(null);
   const inhaleAudioRef = useRef<HTMLAudioElement | null>(null);
   const exhaleAudioRef = useRef<HTMLAudioElement | null>(null);
   const holdAudioRef = useRef<HTMLAudioElement | null>(null);
+  const lastStateRef = useRef<string>("idle");
 
   const requestWakeLock = async () => {
     try {
@@ -81,6 +83,25 @@ export const Breath = ({
     };
   }, [startTime]);
 
+  const stopAllSounds = () => {
+    if (chimeAudioRef.current) {
+      chimeAudioRef.current.pause();
+      chimeAudioRef.current.currentTime = 0;
+    }
+    if (inhaleAudioRef.current) {
+      inhaleAudioRef.current.pause();
+      inhaleAudioRef.current.currentTime = 0;
+    }
+    if (exhaleAudioRef.current) {
+      exhaleAudioRef.current.pause();
+      exhaleAudioRef.current.currentTime = 0;
+    }
+    if (holdAudioRef.current) {
+      holdAudioRef.current.pause();
+      holdAudioRef.current.currentTime = 0;
+    }
+  };
+
   useEffect(() => {
     // Initialize audio elements
     chimeAudioRef.current = new Audio(chimeSound);
@@ -95,24 +116,26 @@ export const Breath = ({
     holdAudioRef.current = new Audio(holdSound);
     holdAudioRef.current.volume = 0.5;
 
+    // Handle visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        setIsPaused(true);
+        stopAllSounds();
+      } else if (document.visibilityState === "visible") {
+        setIsPaused(false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      stopAllSounds();
       // Cleanup audio elements
-      if (chimeAudioRef.current) {
-        chimeAudioRef.current.pause();
-        chimeAudioRef.current = null;
-      }
-      if (inhaleAudioRef.current) {
-        inhaleAudioRef.current.pause();
-        inhaleAudioRef.current = null;
-      }
-      if (exhaleAudioRef.current) {
-        exhaleAudioRef.current.pause();
-        exhaleAudioRef.current = null;
-      }
-      if (holdAudioRef.current) {
-        holdAudioRef.current.pause();
-        holdAudioRef.current = null;
-      }
+      chimeAudioRef.current = null;
+      inhaleAudioRef.current = null;
+      exhaleAudioRef.current = null;
+      holdAudioRef.current = null;
     };
   }, []);
 
@@ -123,6 +146,13 @@ export const Breath = ({
   const handleStateChange = (
     state: "inhale" | "exhale" | "holdIn" | "holdOut" | "idle"
   ) => {
+    // Don't play sounds if the tab is hidden or paused
+    if (document.visibilityState === "hidden" || isPaused) return;
+
+    // Don't play the same sound twice in a row
+    if (state === lastStateRef.current) return;
+    lastStateRef.current = state;
+
     if (state === "inhale" && inhaleAudioRef.current) {
       inhaleAudioRef.current.currentTime = 0;
       inhaleAudioRef.current.play().catch(console.error);
@@ -140,10 +170,12 @@ export const Breath = ({
 
   const handleComplete = async () => {
     setStartTime(null);
+    setIsPaused(false);
+    lastStateRef.current = "idle";
     await releaseWakeLock();
 
-    // Play completion sound
-    if (chimeAudioRef.current) {
+    // Only play completion sound if the tab is visible
+    if (document.visibilityState === "visible" && chimeAudioRef.current) {
       try {
         await chimeAudioRef.current.play();
       } catch (err) {
