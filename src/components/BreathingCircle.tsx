@@ -3,7 +3,27 @@ import "./BreathingCircle.css";
 
 type BreathingState = "inhale" | "holdIn" | "exhale" | "holdOut" | "idle";
 
-export const BreathingCircle = () => {
+export type BreathingPattern = {
+  inhale: number;
+  holdIn?: number;
+  exhale: number;
+  holdOut?: number;
+};
+
+const defaultPattern: BreathingPattern = {
+  inhale: 6,
+  holdIn: 2,
+  exhale: 6,
+  holdOut: 2,
+};
+
+interface BreathingCircleProps {
+  pattern?: BreathingPattern;
+}
+
+export const BreathingCircle = ({
+  pattern = defaultPattern,
+}: BreathingCircleProps) => {
   const [breathingState, setBreathingState] = useState<BreathingState>("idle");
   const [isStarted, setIsStarted] = useState(false);
 
@@ -12,21 +32,35 @@ export const BreathingCircle = () => {
 
     const breathingCycle = async () => {
       while (isStarted) {
-        // Inhale for 6 seconds
+        // Inhale
         setBreathingState("inhale");
-        await new Promise((resolve) => setTimeout(resolve, 6000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, pattern.inhale * 1000)
+        );
 
-        // Hold breath for 2 seconds
-        setBreathingState("holdIn");
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Hold in if specified
+        const holdInTime = pattern.holdIn ?? 0;
+        if (holdInTime > 0) {
+          setBreathingState("holdIn");
+          await new Promise((resolve) =>
+            setTimeout(resolve, holdInTime * 1000)
+          );
+        }
 
-        // Exhale for 6 seconds
+        // Exhale
         setBreathingState("exhale");
-        await new Promise((resolve) => setTimeout(resolve, 6000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, pattern.exhale * 1000)
+        );
 
-        // Hold breath for 2 seconds
-        setBreathingState("holdOut");
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Hold out if specified
+        const holdOutTime = pattern.holdOut ?? 0;
+        if (holdOutTime > 0) {
+          setBreathingState("holdOut");
+          await new Promise((resolve) =>
+            setTimeout(resolve, holdOutTime * 1000)
+          );
+        }
       }
     };
 
@@ -35,7 +69,7 @@ export const BreathingCircle = () => {
     return () => {
       setIsStarted(false);
     };
-  }, [isStarted]);
+  }, [isStarted, pattern]);
 
   const handleStart = () => {
     setIsStarted(true);

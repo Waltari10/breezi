@@ -1,35 +1,37 @@
-import { useState } from "react";
 import "./Navigation.css";
 
 type Tab = "breath" | "templates" | "history" | "settings";
 
-export const Navigation = () => {
-  const [activeTab, setActiveTab] = useState<Tab>("breath");
+interface NavigationProps {
+  activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
+}
 
+export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   return (
     <nav className="navigation">
       <div className="nav-content">
         <button
           className={`nav-tab ${activeTab === "breath" ? "active" : ""}`}
-          onClick={() => setActiveTab("breath")}
+          onClick={() => onTabChange("breath")}
         >
           Breath
         </button>
         <button
           className={`nav-tab ${activeTab === "templates" ? "active" : ""}`}
-          onClick={() => setActiveTab("templates")}
+          onClick={() => onTabChange("templates")}
         >
           Templates
         </button>
         <button
           className={`nav-tab ${activeTab === "history" ? "active" : ""}`}
-          onClick={() => setActiveTab("history")}
+          onClick={() => onTabChange("history")}
         >
           History
         </button>
         <button
           className={`nav-tab ${activeTab === "settings" ? "active" : ""}`}
-          onClick={() => setActiveTab("settings")}
+          onClick={() => onTabChange("settings")}
         >
           Settings
         </button>
