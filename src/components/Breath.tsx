@@ -22,11 +22,23 @@ export const Breath = ({
 }: BreathProps) => {
   const [currentPattern] = useState<BreathingPattern>(pattern);
 
+  const formatDuration = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  };
+
   return (
     <div className="breath-container">
       <div className="breath-header">
         <h1>{currentPattern.name}</h1>
         <div className="pattern-info">
+          <div className="pattern-detail">
+            <span className="label">Duration:</span>
+            <span className="value">
+              {formatDuration(currentPattern.duration)}
+            </span>
+          </div>
           <div className="pattern-detail">
             <span className="label">Inhale:</span>
             <span className="value">{currentPattern.inhale}s</span>

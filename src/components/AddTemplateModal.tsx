@@ -15,9 +15,10 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
 }) => {
   const [name, setName] = useState("");
   const [inhale, setInhale] = useState(4);
-  const [holdIn, setHoldIn] = useState(0);
+  const [holdIn, setHoldIn] = useState(4);
   const [exhale, setExhale] = useState(4);
-  const [holdOut, setHoldOut] = useState(0);
+  const [holdOut, setHoldOut] = useState(4);
+  const [duration, setDuration] = useState(300); // 5 minutes default
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,16 +30,17 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
       holdIn,
       exhale,
       holdOut,
-      duration: inhale + holdIn + exhale + holdOut,
+      duration,
     };
 
     onSave(pattern);
     // Reset form
     setName("");
     setInhale(4);
-    setHoldIn(0);
+    setHoldIn(4);
     setExhale(4);
-    setHoldOut(0);
+    setHoldOut(4);
+    setDuration(300);
   };
 
   if (!isOpen) return null;
@@ -86,72 +88,73 @@ const AddTemplateModal: React.FC<AddTemplateModalProps> = ({
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="inhale">Inhale Duration (seconds)</label>
+              <label htmlFor="inhale">Inhale (seconds)</label>
               <input
                 id="inhale"
                 type="number"
+                value={inhale}
+                onChange={(e) => setInhale(Number(e.target.value))}
                 min="1"
                 max="20"
-                value={inhale}
-                onChange={(e) =>
-                  setInhale(
-                    Math.max(1, Math.min(20, parseInt(e.target.value) || 1))
-                  )
-                }
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="holdIn">Hold In Duration (seconds)</label>
+              <label htmlFor="holdIn">Hold In (seconds)</label>
               <input
                 id="holdIn"
                 type="number"
+                value={holdIn}
+                onChange={(e) => setHoldIn(Number(e.target.value))}
                 min="0"
                 max="20"
-                value={holdIn}
-                onChange={(e) =>
-                  setHoldIn(
-                    Math.max(0, Math.min(20, parseInt(e.target.value) || 0))
-                  )
-                }
+                required
               />
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="exhale">Exhale Duration (seconds)</label>
+              <label htmlFor="exhale">Exhale (seconds)</label>
               <input
                 id="exhale"
                 type="number"
+                value={exhale}
+                onChange={(e) => setExhale(Number(e.target.value))}
                 min="1"
                 max="20"
-                value={exhale}
-                onChange={(e) =>
-                  setExhale(
-                    Math.max(1, Math.min(20, parseInt(e.target.value) || 1))
-                  )
-                }
                 required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="holdOut">Hold Out Duration (seconds)</label>
+              <label htmlFor="holdOut">Hold Out (seconds)</label>
               <input
                 id="holdOut"
                 type="number"
+                value={holdOut}
+                onChange={(e) => setHoldOut(Number(e.target.value))}
                 min="0"
                 max="20"
-                value={holdOut}
-                onChange={(e) =>
-                  setHoldOut(
-                    Math.max(0, Math.min(20, parseInt(e.target.value) || 0))
-                  )
-                }
+                required
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="duration">Exercise Duration (seconds)</label>
+            <input
+              id="duration"
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              min="60"
+              max="3600"
+              step="30"
+              required
+            />
+            <small>Enter duration in seconds (1-60 minutes)</small>
           </div>
 
           <div className="modal-footer">

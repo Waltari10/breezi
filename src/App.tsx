@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import {
   BreathingCircle,
@@ -14,24 +14,39 @@ import "./App.css";
 
 type Tab = "breath" | "templates" | "history" | "settings";
 
+const STORAGE_KEY = "breezi-selected-pattern";
+
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = (location.pathname.slice(1) as Tab) || "breath";
 
   const [selectedPattern, setSelectedPattern] =
-    useState<BreathingPattern | null>(null);
+    useState<BreathingPattern | null>(() => {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    });
+
   const [currentExercise, setCurrentExercise] = useState<{
     name: string;
     startTime: number;
   } | null>(null);
+
+  useEffect(() => {
+    if (selectedPattern) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedPattern));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [selectedPattern]);
 
   const handleTabChange = (tab: Tab) => {
     navigate(`/${tab}`);
   };
 
   const handleStartExercise = (pattern: BreathingPattern, name: string) => {
-    setSelectedPattern({ ...pattern, name });
+    const newPattern = { ...pattern, name };
+    setSelectedPattern(newPattern);
     setCurrentExercise({ name, startTime: Date.now() });
     navigate("/breath");
   };
