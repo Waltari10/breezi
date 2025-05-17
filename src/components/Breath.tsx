@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BreathingCircle, type BreathingPattern } from "./BreathingCircle";
 import { Timer } from "./Timer";
+import chimeSound from "../assets/chime.mp3";
 import "./Breath.css";
 
 const defaultPattern: BreathingPattern = {
@@ -24,6 +25,7 @@ export const Breath = ({
   const [currentPattern] = useState<BreathingPattern>(pattern);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const requestWakeLock = async () => {
     try {
@@ -73,13 +75,37 @@ export const Breath = ({
     };
   }, [startTime]);
 
+  useEffect(() => {
+    // Initialize audio element
+    audioRef.current = new Audio(chimeSound);
+    audioRef.current.volume = 0.5; // Set volume to 50%
+
+    return () => {
+      // Cleanup audio element
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
   const handleStart = () => {
     setStartTime(Date.now());
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     setStartTime(null);
-    releaseWakeLock();
+    await releaseWakeLock();
+
+    // Play completion sound
+    if (audioRef.current) {
+      try {
+        await audioRef.current.play();
+      } catch (err) {
+        console.log("Failed to play completion sound:", err);
+      }
+    }
+
     onComplete?.();
   };
 
