@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { BreathingCircle, type BreathingPattern } from "./BreathingCircle";
 import { Timer } from "./Timer";
 import chimeSound from "../assets/chime.mp3";
+import inhaleSound from "../assets/inhale.mp3";
+import exhaleSound from "../assets/exhale.mp3";
 import "./Breath.css";
 
 const defaultPattern: BreathingPattern = {
@@ -25,7 +27,9 @@ export const Breath = ({
   const [currentPattern] = useState<BreathingPattern>(pattern);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const chimeAudioRef = useRef<HTMLAudioElement | null>(null);
+  const inhaleAudioRef = useRef<HTMLAudioElement | null>(null);
+  const exhaleAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const requestWakeLock = async () => {
     try {
@@ -76,15 +80,29 @@ export const Breath = ({
   }, [startTime]);
 
   useEffect(() => {
-    // Initialize audio element
-    audioRef.current = new Audio(chimeSound);
-    audioRef.current.volume = 0.5; // Set volume to 50%
+    // Initialize audio elements
+    chimeAudioRef.current = new Audio(chimeSound);
+    chimeAudioRef.current.volume = 0.5;
+
+    inhaleAudioRef.current = new Audio(inhaleSound);
+    inhaleAudioRef.current.volume = 0.5;
+
+    exhaleAudioRef.current = new Audio(exhaleSound);
+    exhaleAudioRef.current.volume = 0.5;
 
     return () => {
-      // Cleanup audio element
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+      // Cleanup audio elements
+      if (chimeAudioRef.current) {
+        chimeAudioRef.current.pause();
+        chimeAudioRef.current = null;
+      }
+      if (inhaleAudioRef.current) {
+        inhaleAudioRef.current.pause();
+        inhaleAudioRef.current = null;
+      }
+      if (exhaleAudioRef.current) {
+        exhaleAudioRef.current.pause();
+        exhaleAudioRef.current = null;
       }
     };
   }, []);
@@ -93,16 +111,28 @@ export const Breath = ({
     setStartTime(Date.now());
   };
 
+  const handleStateChange = (
+    state: "inhale" | "exhale" | "holdIn" | "holdOut" | "idle"
+  ) => {
+    if (state === "inhale" && inhaleAudioRef.current) {
+      inhaleAudioRef.current.currentTime = 0;
+      inhaleAudioRef.current.play().catch(console.error);
+    } else if (state === "exhale" && exhaleAudioRef.current) {
+      exhaleAudioRef.current.currentTime = 0;
+      exhaleAudioRef.current.play().catch(console.error);
+    }
+  };
+
   const handleComplete = async () => {
     setStartTime(null);
     await releaseWakeLock();
 
     // Play completion sound
-    if (audioRef.current) {
+    if (chimeAudioRef.current) {
       try {
-        await audioRef.current.play();
+        await chimeAudioRef.current.play();
       } catch (err) {
-        console.log("Failed to play completion sound:", err);
+        console.error("Failed to play completion sound:", err);
       }
     }
 
@@ -158,6 +188,7 @@ export const Breath = ({
           pattern={currentPattern}
           onStart={handleStart}
           onComplete={handleComplete}
+          onStateChange={handleStateChange}
         />
       </div>
     </div>

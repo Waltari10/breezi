@@ -25,15 +25,22 @@ interface BreathingCircleProps {
   pattern?: BreathingPattern;
   onComplete?: () => void;
   onStart?: () => void;
+  onStateChange?: (state: BreathingState) => void;
 }
 
 export const BreathingCircle = ({
   pattern = defaultPattern,
   onComplete,
   onStart,
+  onStateChange,
 }: BreathingCircleProps) => {
   const [breathingState, setBreathingState] = useState<BreathingState>("idle");
   const [isStarted, setIsStarted] = useState(false);
+
+  const updateBreathingState = (newState: BreathingState) => {
+    setBreathingState(newState);
+    onStateChange?.(newState);
+  };
 
   useEffect(() => {
     if (!isStarted) return;
@@ -41,7 +48,7 @@ export const BreathingCircle = ({
     const breathingCycle = async () => {
       while (isStarted) {
         // Inhale
-        setBreathingState("inhale");
+        updateBreathingState("inhale");
         await new Promise((resolve) =>
           setTimeout(resolve, pattern.inhale * 1000)
         );
@@ -49,14 +56,14 @@ export const BreathingCircle = ({
         // Hold in if specified
         const holdInTime = pattern.holdIn ?? 0;
         if (holdInTime > 0) {
-          setBreathingState("holdIn");
+          updateBreathingState("holdIn");
           await new Promise((resolve) =>
             setTimeout(resolve, holdInTime * 1000)
           );
         }
 
         // Exhale
-        setBreathingState("exhale");
+        updateBreathingState("exhale");
         await new Promise((resolve) =>
           setTimeout(resolve, pattern.exhale * 1000)
         );
@@ -64,7 +71,7 @@ export const BreathingCircle = ({
         // Hold out if specified
         const holdOutTime = pattern.holdOut ?? 0;
         if (holdOutTime > 0) {
-          setBreathingState("holdOut");
+          updateBreathingState("holdOut");
           await new Promise((resolve) =>
             setTimeout(resolve, holdOutTime * 1000)
           );
@@ -80,11 +87,11 @@ export const BreathingCircle = ({
         onComplete();
       }
     };
-  }, [isStarted, pattern, onComplete]);
+  }, [isStarted, pattern, onComplete, onStateChange]);
 
   const handleStart = () => {
     setIsStarted(true);
-    setBreathingState("inhale");
+    updateBreathingState("inhale");
     onStart?.();
   };
 
