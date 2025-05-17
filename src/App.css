@@ -44,3 +44,9 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-content {
+  padding-top: 64px; /* Height of the navigation bar */
+  min-height: 100vh;
+  background-color: #1a1a1a;
+}
