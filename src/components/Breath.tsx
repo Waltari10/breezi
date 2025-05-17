@@ -4,6 +4,7 @@ import { Timer } from "./Timer";
 import chimeSound from "../assets/chime.mp3";
 import inhaleSound from "../assets/inhale.mp3";
 import exhaleSound from "../assets/exhale.mp3";
+import holdSound from "../assets/hold.mp3";
 import "./Breath.css";
 
 const defaultPattern: BreathingPattern = {
@@ -30,6 +31,7 @@ export const Breath = ({
   const chimeAudioRef = useRef<HTMLAudioElement | null>(null);
   const inhaleAudioRef = useRef<HTMLAudioElement | null>(null);
   const exhaleAudioRef = useRef<HTMLAudioElement | null>(null);
+  const holdAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const requestWakeLock = async () => {
     try {
@@ -90,6 +92,9 @@ export const Breath = ({
     exhaleAudioRef.current = new Audio(exhaleSound);
     exhaleAudioRef.current.volume = 0.5;
 
+    holdAudioRef.current = new Audio(holdSound);
+    holdAudioRef.current.volume = 0.5;
+
     return () => {
       // Cleanup audio elements
       if (chimeAudioRef.current) {
@@ -103,6 +108,10 @@ export const Breath = ({
       if (exhaleAudioRef.current) {
         exhaleAudioRef.current.pause();
         exhaleAudioRef.current = null;
+      }
+      if (holdAudioRef.current) {
+        holdAudioRef.current.pause();
+        holdAudioRef.current = null;
       }
     };
   }, []);
@@ -120,6 +129,12 @@ export const Breath = ({
     } else if (state === "exhale" && exhaleAudioRef.current) {
       exhaleAudioRef.current.currentTime = 0;
       exhaleAudioRef.current.play().catch(console.error);
+    } else if (
+      (state === "holdIn" || state === "holdOut") &&
+      holdAudioRef.current
+    ) {
+      holdAudioRef.current.currentTime = 0;
+      holdAudioRef.current.play().catch(console.error);
     }
   };
 
