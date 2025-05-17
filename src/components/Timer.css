@@ -1,0 +1,37 @@
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 240px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.timer-paused {
+  opacity: 0.5;
+}
+
+.timer-display {
+  font-family: monospace;
+  font-size: 24px;
+  color: #40dfff;
+  text-shadow: 0 0 10px rgba(64, 223, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.timer-progress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.timer-progress-bar {
+  height: 100%;
+  background: #40dfff;
+  box-shadow: 0 0 10px rgba(64, 223, 255, 0.5);
+  transition: width 1s linear;
+} 

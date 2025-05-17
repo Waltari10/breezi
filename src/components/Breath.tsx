@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BreathingCircle, type BreathingPattern } from "./BreathingCircle";
+import { Timer } from "./Timer";
 import "./Breath.css";
 
 const defaultPattern: BreathingPattern = {
@@ -21,6 +22,16 @@ export const Breath = ({
   onComplete,
 }: BreathProps) => {
   const [currentPattern] = useState<BreathingPattern>(pattern);
+  const [startTime, setStartTime] = useState<number | null>(null);
+
+  const handleStart = () => {
+    setStartTime(Date.now());
+  };
+
+  const handleComplete = () => {
+    setStartTime(null);
+    onComplete?.();
+  };
 
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -62,7 +73,16 @@ export const Breath = ({
         </div>
       </div>
       <div className="breath-content">
-        <BreathingCircle pattern={currentPattern} onComplete={onComplete} />
+        <Timer
+          startTime={startTime}
+          duration={currentPattern.duration}
+          onComplete={handleComplete}
+        />
+        <BreathingCircle
+          pattern={currentPattern}
+          onStart={handleStart}
+          onComplete={handleComplete}
+        />
       </div>
     </div>
   );
