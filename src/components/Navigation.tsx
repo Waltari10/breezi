@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Navigation.css";
 
 type Tab = "breath" | "templates" | "history" | "settings";
@@ -11,12 +12,21 @@ interface NavigationProps {
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleTabClick = (tab: Tab) => {
+    onTabChange(tab);
+    setIsOpen(false);
+  };
+
   return (
     <nav className="navigation">
       <div className="nav-content">
-        <div className="nav-logo">
+        <Link
+          to="/"
+          className="nav-logo"
+          onClick={() => handleTabClick("breath")}
+        >
           <span className="logo-text">Breezi</span>
-        </div>
+        </Link>
         <button
           className="menu-toggle"
           onClick={() => setIsOpen(!isOpen)}
@@ -29,42 +39,34 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           </div>
         </button>
         <div className={`nav-tabs ${isOpen ? "open" : ""}`}>
-          <button
+          <Link
+            to="/breath"
             className={`nav-tab ${activeTab === "breath" ? "active" : ""}`}
-            onClick={() => {
-              onTabChange("breath");
-              setIsOpen(false);
-            }}
+            onClick={() => handleTabClick("breath")}
           >
             Breath
-          </button>
-          <button
+          </Link>
+          <Link
+            to="/templates"
             className={`nav-tab ${activeTab === "templates" ? "active" : ""}`}
-            onClick={() => {
-              onTabChange("templates");
-              setIsOpen(false);
-            }}
+            onClick={() => handleTabClick("templates")}
           >
             Templates
-          </button>
-          <button
+          </Link>
+          <Link
+            to="/history"
             className={`nav-tab ${activeTab === "history" ? "active" : ""}`}
-            onClick={() => {
-              onTabChange("history");
-              setIsOpen(false);
-            }}
+            onClick={() => handleTabClick("history")}
           >
             History
-          </button>
-          <button
+          </Link>
+          <Link
+            to="/settings"
             className={`nav-tab ${activeTab === "settings" ? "active" : ""}`}
-            onClick={() => {
-              onTabChange("settings");
-              setIsOpen(false);
-            }}
+            onClick={() => handleTabClick("settings")}
           >
             Settings
-          </button>
+          </Link>
         </div>
       </div>
     </nav>

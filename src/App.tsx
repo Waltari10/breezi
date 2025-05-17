@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import {
   BreathingCircle,
   type BreathingPattern,
@@ -7,17 +8,16 @@ import { Navigation } from "./components/Navigation";
 import { Templates } from "./components/Templates";
 import { History } from "./components/History";
 import { Settings } from "./components/Settings";
+import { Breath } from "./components/Breath";
 import { addToHistory } from "./utils/history";
 import "./App.css";
 
 type Tab = "breath" | "templates" | "history" | "settings";
-const ACTIVE_TAB_KEY = "breezi-active-tab";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>(() => {
-    const savedTab = localStorage.getItem(ACTIVE_TAB_KEY);
-    return (savedTab as Tab) || "breath";
-  });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const activeTab = (location.pathname.slice(1) as Tab) || "breath";
 
   const [selectedPattern, setSelectedPattern] =
     useState<BreathingPattern | null>(null);
@@ -26,14 +26,14 @@ function App() {
     startTime: number;
   } | null>(null);
 
-  useEffect(() => {
-    localStorage.setItem(ACTIVE_TAB_KEY, activeTab);
-  }, [activeTab]);
+  const handleTabChange = (tab: Tab) => {
+    navigate(`/${tab}`);
+  };
 
   const handleStartExercise = (pattern: BreathingPattern, name: string) => {
     setSelectedPattern(pattern);
     setCurrentExercise({ name, startTime: Date.now() });
-    setActiveTab("breath");
+    navigate("/breath");
   };
 
   const handleExerciseComplete = () => {
@@ -50,30 +50,37 @@ function App() {
     }
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "breath":
-        return (
-          <BreathingCircle
-            pattern={selectedPattern ?? undefined}
-            onComplete={handleExerciseComplete}
-          />
-        );
-      case "templates":
-        return <Templates onStartExercise={handleStartExercise} />;
-      case "history":
-        return <History />;
-      case "settings":
-        return <Settings />;
-      default:
-        return <BreathingCircle />;
-    }
-  };
-
   return (
     <>
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="app-content">{renderContent()}</main>
+      <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
+      <main className="app-content">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <BreathingCircle
+                pattern={selectedPattern ?? undefined}
+                onComplete={handleExerciseComplete}
+              />
+            }
+          />
+          <Route
+            path="/breath"
+            element={
+              <Breath
+                pattern={selectedPattern ?? undefined}
+                onComplete={handleExerciseComplete}
+              />
+            }
+          />
+          <Route
+            path="/templates"
+            element={<Templates onStartExercise={handleStartExercise} />}
+          />
+          <Route path="/history" element={<History />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </main>
     </>
   );
 }
