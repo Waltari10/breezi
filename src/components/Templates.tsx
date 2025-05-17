@@ -58,6 +58,11 @@ const BreathingPatternVisualizer = ({
           },
         ]
       : []),
+    {
+      type: "duration",
+      duration: pattern.duration,
+      angle: 0, // Not used in visualization
+    },
   ];
 
   let currentAngle = 0;
@@ -108,7 +113,9 @@ const BreathingPatternVisualizer = ({
                 ? "Hold"
                 : segment.type === "inhale"
                 ? "Inhale"
-                : "Exhale"}
+                : segment.type === "exhale"
+                ? "Exhale"
+                : "Duration"}
             </span>
             <span className="legend-duration">{segment.duration}s</span>
           </div>

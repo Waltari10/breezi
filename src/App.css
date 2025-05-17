@@ -4,6 +4,12 @@
   box-sizing: border-box;
 }
 
+small {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 500;
+}
+
 #root {
   width: 100%;
   min-height: 100vh;

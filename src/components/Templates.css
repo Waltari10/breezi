@@ -126,6 +126,8 @@
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
+  min-height: 24px;
+  box-sizing: border-box;
 }
 
 .legend-color {
@@ -147,6 +149,11 @@
   background: #868e96;
 }
 
+.legend-color.duration {
+  background: #40dfff;
+  opacity: 0.9;
+}
+
 .legend-label {
   color: rgba(255, 255, 255, 0.7);
 }
@@ -155,6 +162,12 @@
   color: rgba(255, 255, 255, 0.5);
   font-family: monospace;
   font-size: 11px;
+}
+
+.legend-item:last-child {
+  margin-top: 0;
+  padding-top: 4px;
+  border-top: none;
 }
 
 .start-button {

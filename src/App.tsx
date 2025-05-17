@@ -1,20 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import {
-  BreathingCircle,
-  type BreathingPattern,
-} from "./components/BreathingCircle";
+import { BreathingCircle } from "./components/BreathingCircle";
 import { Navigation } from "./components/Navigation";
 import { Templates } from "./components/Templates";
 import { History } from "./components/History";
 import { Settings } from "./components/Settings";
 import { Breath } from "./components/Breath";
 import { addToHistory } from "./utils/history";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { STORAGE_KEYS, DEFAULT_PATTERN } from "./constants/storage";
+import type { BreathingPattern, Tab, CurrentExercise } from "./types/breathing";
 import "./App.css";
-
-type Tab = "breath" | "templates" | "history" | "settings";
-
-const STORAGE_KEY = "breezi-selected-pattern";
 
 function App() {
   const navigate = useNavigate();
@@ -22,23 +18,13 @@ function App() {
   const activeTab = (location.pathname.slice(1) as Tab) || "breath";
 
   const [selectedPattern, setSelectedPattern] =
-    useState<BreathingPattern | null>(() => {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
-    });
+    useLocalStorage<BreathingPattern | null>(
+      STORAGE_KEYS.SELECTED_PATTERN,
+      null
+    );
 
-  const [currentExercise, setCurrentExercise] = useState<{
-    name: string;
-    startTime: number;
-  } | null>(null);
-
-  useEffect(() => {
-    if (selectedPattern) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedPattern));
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }, [selectedPattern]);
+  const [currentExercise, setCurrentExercise] =
+    useState<CurrentExercise | null>(null);
 
   const handleTabChange = (tab: Tab) => {
     navigate(`/${tab}`);
@@ -74,7 +60,7 @@ function App() {
             path="/"
             element={
               <BreathingCircle
-                pattern={selectedPattern ?? undefined}
+                pattern={selectedPattern ?? DEFAULT_PATTERN}
                 onComplete={handleExerciseComplete}
               />
             }
@@ -83,7 +69,7 @@ function App() {
             path="/breath"
             element={
               <Breath
-                pattern={selectedPattern ?? undefined}
+                pattern={selectedPattern ?? DEFAULT_PATTERN}
                 onComplete={handleExerciseComplete}
               />
             }
