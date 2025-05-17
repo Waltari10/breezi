@@ -215,6 +215,45 @@
   height: 20px;
 }
 
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.template-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.delete-template-button {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.delete-template-button:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.3);
+  transform: translateY(-1px);
+}
+
+.delete-template-button svg {
+  width: 16px;
+  height: 16px;
+}
+
 @media (max-width: 768px) {
   .templates-grid {
     grid-template-columns: 1fr;

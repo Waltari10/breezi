@@ -1,52 +1,14 @@
+import { useState, useEffect } from "react";
 import type { BreathingPattern } from "./BreathingCircle";
+import { getTemplates, saveTemplates } from "../utils/templates";
 import "./Templates.css";
 
-type Exercise = {
+export type Exercise = {
   id: string;
   name: string;
   description: string;
   pattern: BreathingPattern;
 };
-
-const exercises: Exercise[] = [
-  {
-    id: "box-breath",
-    name: "Box Breath",
-    description: "Equal breathing pattern for stress reduction and focus",
-    pattern: {
-      inhale: 4,
-      holdIn: 4,
-      exhale: 4,
-      holdOut: 4,
-      name: "Box Breath",
-      duration: 0,
-    },
-  },
-  {
-    id: "hrv-breath",
-    name: "HRV Breath",
-    description: "Optimized for heart rate variability and relaxation",
-    pattern: {
-      inhale: 6,
-      exhale: 6,
-      name: "HRV Breath",
-      duration: 0,
-    },
-  },
-  {
-    id: "test-exercise",
-    name: "Test Exercise",
-    description: "Balanced breathing with holds for mindfulness",
-    pattern: {
-      inhale: 6,
-      holdIn: 2,
-      exhale: 6,
-      holdOut: 2,
-      name: "Test Exercise",
-      duration: 0,
-    },
-  },
-];
 
 interface TemplatesProps {
   onStartExercise: (pattern: BreathingPattern, name: string) => void;
@@ -156,6 +118,22 @@ const BreathingPatternVisualizer = ({
 };
 
 export const Templates = ({ onStartExercise }: TemplatesProps) => {
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+
+  useEffect(() => {
+    setExercises(getTemplates());
+  }, []);
+
+  const handleDeleteTemplate = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this template?")) {
+      const updatedExercises = exercises.filter(
+        (exercise) => exercise.id !== id
+      );
+      setExercises(updatedExercises);
+      saveTemplates(updatedExercises);
+    }
+  };
+
   return (
     <div className="templates-container">
       <div className="templates-header">
@@ -181,7 +159,30 @@ export const Templates = ({ onStartExercise }: TemplatesProps) => {
       <div className="templates-grid">
         {exercises.map((exercise) => (
           <div key={exercise.id} className="template-card">
-            <h2>{exercise.name}</h2>
+            <div className="template-header">
+              <h2>{exercise.name}</h2>
+              <button
+                className="delete-template-button"
+                onClick={() => handleDeleteTemplate(exercise.id)}
+                title="Delete template"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
             <p className="description">{exercise.description}</p>
             <BreathingPatternVisualizer pattern={exercise.pattern} />
             <button
