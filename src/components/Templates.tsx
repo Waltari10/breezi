@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { BreathingPattern } from "./BreathingCircle";
 import { getTemplates, saveTemplates } from "../utils/templates";
+import AddTemplateModal from "./AddTemplateModal";
 import "./Templates.css";
 
 export type Exercise = {
@@ -119,6 +120,7 @@ const BreathingPatternVisualizer = ({
 
 export const Templates = ({ onStartExercise }: TemplatesProps) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setExercises(getTemplates());
@@ -134,11 +136,29 @@ export const Templates = ({ onStartExercise }: TemplatesProps) => {
     }
   };
 
+  const handleAddTemplate = (pattern: BreathingPattern) => {
+    const newExercise: Exercise = {
+      id: Date.now().toString(),
+      name: pattern.name,
+      description: `${pattern.inhale}s inhale, ${pattern.holdIn}s hold, ${pattern.exhale}s exhale, ${pattern.holdOut}s rest`,
+      pattern,
+    };
+
+    const updatedExercises = [...exercises, newExercise];
+    setExercises(updatedExercises);
+    saveTemplates(updatedExercises);
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="templates-container">
       <div className="templates-header">
         <h1>Breathing Templates</h1>
-        <button className="add-template-button" title="Add custom template">
+        <button
+          className="add-template-button"
+          onClick={() => setIsModalOpen(true)}
+          aria-label="Add new template"
+        >
           <svg
             width="24"
             height="24"
@@ -194,6 +214,12 @@ export const Templates = ({ onStartExercise }: TemplatesProps) => {
           </div>
         ))}
       </div>
+
+      <AddTemplateModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleAddTemplate}
+      />
     </div>
   );
 };
