@@ -19,10 +19,12 @@ const defaultPattern: BreathingPattern = {
 
 interface BreathingCircleProps {
   pattern?: BreathingPattern;
+  onComplete?: () => void;
 }
 
 export const BreathingCircle = ({
   pattern = defaultPattern,
+  onComplete,
 }: BreathingCircleProps) => {
   const [breathingState, setBreathingState] = useState<BreathingState>("idle");
   const [isStarted, setIsStarted] = useState(false);
@@ -68,8 +70,11 @@ export const BreathingCircle = ({
 
     return () => {
       setIsStarted(false);
+      if (onComplete) {
+        onComplete();
+      }
     };
-  }, [isStarted, pattern]);
+  }, [isStarted, pattern, onComplete]);
 
   const handleStart = () => {
     setIsStarted(true);

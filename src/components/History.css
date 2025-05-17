@@ -1,0 +1,195 @@
+.history-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.history-container h1 {
+  color: white;
+  font-size: 32px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.history-header h1 {
+  margin-bottom: 0;
+}
+
+.clear-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 20px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.history-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.history-card-header h2 {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.timestamp {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+.history-card-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail .label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+.detail .value {
+  color: rgba(64, 223, 255, 0.9);
+  font-family: monospace;
+  font-size: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 48px 0;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 18px;
+}
+
+.empty-state .subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.streak-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.streak-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.streak-count {
+  font-size: 24px;
+  font-weight: bold;
+  color: #40dfff;
+  font-family: monospace;
+}
+
+.streak-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.streak-warning {
+  font-size: 20px;
+  animation: pulse 2s infinite;
+  cursor: help;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .history-container {
+    padding: 24px 16px;
+  }
+
+  .history-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .streak-display {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .history-card-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .timestamp {
+    align-self: flex-start;
+  }
+} 
