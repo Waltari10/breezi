@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BreathingCircle, type BreathingPattern } from "./BreathingCircle";
 import { Timer } from "./Timer";
 import "./Breath.css";
@@ -23,6 +23,55 @@ export const Breath = ({
 }: BreathProps) => {
   const [currentPattern] = useState<BreathingPattern>(pattern);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+
+  const requestWakeLock = async () => {
+    try {
+      if ("wakeLock" in navigator) {
+        const lock = await navigator.wakeLock.request("screen");
+        setWakeLock(lock);
+      }
+    } catch (err) {
+      // Wake Lock request failed - usually because the user denied permission
+      console.log("Wake Lock request failed:", err);
+    }
+  };
+
+  const releaseWakeLock = async () => {
+    if (wakeLock) {
+      try {
+        await wakeLock.release();
+        setWakeLock(null);
+      } catch (err) {
+        console.log("Wake Lock release failed:", err);
+      }
+    }
+  };
+
+  // Request wake lock when component mounts
+  useEffect(() => {
+    requestWakeLock();
+
+    // Release wake lock when component unmounts
+    return () => {
+      releaseWakeLock();
+    };
+  }, []);
+
+  // Handle visibility change
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "visible" && startTime) {
+        // Re-request wake lock when page becomes visible again
+        await requestWakeLock();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [startTime]);
 
   const handleStart = () => {
     setStartTime(Date.now());
@@ -30,6 +79,7 @@ export const Breath = ({
 
   const handleComplete = () => {
     setStartTime(null);
+    releaseWakeLock();
     onComplete?.();
   };
 
